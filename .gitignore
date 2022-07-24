@@ -1,0 +1,11 @@
+#ignore all files in each directory
+*/*
+*
+#unignore .c files in each directory
+!*/*.c
+!*.c
+#unignore .h header files in each directory
+!*/*.h
+!*.h
+#unignore .gitignore
+!.gitignore
