@@ -7,7 +7,7 @@
 
 // Clearscreen for different platforms
 #ifdef _WIN32
-#include <conio.h>
+#define clrscr() system("cls");
 #else
 #include <stdio.h>
 #define clrscr() printf("\e[1;1H\e[2J")
@@ -15,6 +15,8 @@
 
 #define TRUE 1
 #define FALSE 0
+
+typedef char array[100];
 
 typedef struct variable
 {
@@ -86,7 +88,7 @@ char *remove_elements_by_index(char *str, int index, int number)
 
 char *replace_in_string(char *str, char *replace, char *with)
 {
-    char *result = malloc(sizeof(char) * (strlen(str) - strlen(replace) + strlen(with)) * 2);
+    char *result = (char *)malloc(sizeof(char) * (strlen(str) - strlen(replace) + strlen(with)) * 2);
 
     for (int i = 0; i < strlen(str); i++)
     {
@@ -103,3 +105,13 @@ char *replace_in_string(char *str, char *replace, char *with)
     }
     return result;
 }
+
+#define COLOR_RED "\x1b[31m"
+#define COLOR_GREEN "\x1b[32m"
+#define COLOR_YELLOW "\x1b[33m"
+#define COLOR_BLUE "\x1b[34m"
+#define COLOR_MAGENTA "\x1b[35m"
+#define COLOR_CYAN "\x1b[36m"
+#define COLOR_RESET "\x1b[0m"
+// display text in different color
+#define colorPrintf(color, format_string, ...) printf(color format_string "\x1b[0m"__VA_OPT__(, )__VA_ARGS__)

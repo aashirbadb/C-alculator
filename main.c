@@ -1,61 +1,131 @@
 // A program to solve math problems entered by the user
 // Supports variable, input via file and put output to a file
 
-// STEPS:
-// 1. Check the input and format it.
-//    1.1 Remove all spaces from the equation.
-//    1.2 Check if there are proper bracket pairs.
-//    1.3 Check the input for any illegal characters.
-// 2. Go through the input and add all variables to an array.
-// 3. Go through the input and get all the operators along with LHS and RHS and assign them points according to priority.
-//    3.1 Start with the innermost bracket and move forward
-// 4. Go through the array and start calculating from the highest to lowest priority order.
-
 #include <stdio.h>
 #include <string.h>
 #include "utils.h"
 #include "expression.h"
+#include "ui.h"
 
-typedef char array[100];
-
-double evaluate_expression(Expression);
-
-int main()
+enum modes
 {
+    enormal = 1,
+    ehistory = 2,
+};
 
-    // array expression;
-    array expression = "12+( .34-a/24+b)*(123*helo*12/21)";
+void normal_mode();
+void history();
 
-    Expression expr = {(char *)malloc(sizeof(char) * 100), (variable *)malloc(sizeof(variable) * 100), 0};
+int main(int argc, char *argv)
+{
+    int mode;
+    char cont;
 
-    printf("Enter expression: ");
-    scanf("%s", expr.expression);
+    while (1)
+    {
+    mode:
+        clrscr();
+        home_screen();
+        colorPrintf(COLOR_YELLOW, "Enter mode: ");
+        scanf("%d", &mode);
 
-    evaluate_expression(expr);
-
-    // // printf("%d, %s\n", expr.var_length, expr.variables[0].name);
-
-    // printf("\nThe result is: %lf\n", calculate(convert_postfix(expr.expression)));
-
+        clrscr();
+        switch (mode)
+        {
+        case (enum modes)enormal:
+            normal_mode();
+            break;
+        case ehistory:
+            history();
+            break;
+        default:
+            goto quit;
+            break;
+        }
+    }
+quit:
     return 0;
 }
 
-double evaluate_expression(Expression expression)
+void normal_mode()
 {
-    expression.expression = remove_spaces(expression.expression);
-
-    expression.var_length = 0;
-
-    if (is_expression_ok(expression.expression) == TRUE)
+    FILE *normal_history = fopen("normal_history.txt", "a+");
+    array expression = "12+( .34-a/24+b)*(123*helo*12/21)";
+    Expression expr = {(char *)malloc(sizeof(char) * 100), (variable *)malloc(sizeof(variable) * 100), 0};
+    char cont;
+    while (1)
     {
-        expression.var_length = getVariables(expression);
-        printf("result: %g\n", calculate(convert_postfix(format_expression(replaceVariables(expression)))));
+        printf("Enter expression: ");
+        scanf("%s", expr.expression);
+        clrscr();
+        double result = evaluate_expression(expr);
+        printf("%s\n= %g\n", expr.expression, result);
+        fprintf(normal_history, "%s = %g\n", expr.expression, result);
+        if (expr.var_length > 0)
+        {
+            fprintf(normal_history, "WHERE:");
+            for (int i = 0; i < expr.var_length; i++)
+            {
+                fprintf(normal_history, "\t%s = %g\n", expr.variables[i].name, expr.variables[i].value);
+            }
+        }
+
+        fprintf(normal_history, "\n");
+
+        printf("Continue[Y/N]: ");
+        scanf(" %c", &cont);
+
+        if (cont == 'n' || cont == 'N')
+        {
+            break;
+        }
     }
-    else
-    {
-        printf("Your expression is not correct.\n");
-        exit(-1);
-    };
 
-    return 1.0;
+    fclose(normal_history);
+}
+
+void history()
+{
+    char cont;
+
+    while (1)
+    {
+        int mode;
+        printf("Enter mode of which you want to see history: ");
+        scanf(" %d", &mode);
+        char file[100];
+        switch (mode)
+        {
+        case enormal:
+            strcpy(file, "normal_history.txt");
+            break;
+        default:
+            break;
+        }
+
+        if (strlen(file) > 0)
+        {
+
+            FILE *fp = fopen(file, "r");
+            char ch;
+
+            if (fp != NULL)
+            {
+                while (1)
+                {
+                    ch = fgetc(fp);
+                    if (ch == EOF)
+                        break;
+                    printf("%c", ch);
+                }
+            }
+        }
+
+        printf("Continue[Y/N]: ");
+        scanf(" %c", &cont);
+        if (cont == 'n' || cont == 'N')
+        {
+            break;
+        }
+    }
 }

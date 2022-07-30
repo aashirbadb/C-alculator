@@ -301,7 +301,7 @@ char *replaceVariables(Expression exp)
 {
     char *new_exp = (char *)malloc(sizeof(char) * strlen(exp.expression) * 2);
     strcpy(new_exp, exp.expression);
-    char *with = malloc(strlen(exp.expression) * sizeof(char));
+    char *with = (char *)malloc(strlen(exp.expression) * sizeof(char));
 
     for (int i = 0; i < exp.var_length; i++)
     {
@@ -310,4 +310,28 @@ char *replaceVariables(Expression exp)
     }
 
     return new_exp;
+}
+
+char *handle_trigonometric_functions(Expression exp)
+{
+    char *new_exp = (char *)malloc(sizeof(char) * 1000);
+
+    return new_exp;
+}
+
+double evaluate_expression(Expression expression)
+{
+    expression.expression = remove_spaces(expression.expression);
+
+
+    if (is_expression_ok(expression.expression) == TRUE)
+    {
+        expression.var_length = getVariables(expression);
+        return calculate(convert_postfix(format_expression(replaceVariables(expression))));
+    }
+    else
+    {
+        printf("Your expression is not correct.\n");
+        exit(-1);
+    };
 }
