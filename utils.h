@@ -30,7 +30,7 @@ typedef struct Expression
 } Expression;
 
 char *remove_spaces(char *);
-char *remove_element_by_index(char *, int);
+char *remove_elements_by_index(char *, int, int);
 int isNumber(char);
 int isOperator(char);
 
@@ -46,7 +46,7 @@ char *remove_spaces(char *string)
         }
     }
 
-    formatted = realloc(formatted, sizeof(char) * strlen(string));
+    formatted = (char *)realloc(formatted, sizeof(char) * strlen(string));
 
     return formatted;
 }
@@ -61,23 +61,44 @@ int is_number(char ch)
 
 int is_operator(char ch)
 {
-    if (ch == '+' || ch == '-' || ch == '*' || ch == '/')
+    if (ch == '+' || ch == '-' || ch == '*' || ch == '/' || ch == '^')
         return TRUE;
     else
         return FALSE;
 }
 
-char *remove_element_by_index(char *formula, int index)
+char *remove_elements_by_index(char *str, int index, int number)
 {
-    int i, idex = 0, len = strlen(formula);
-    char *result = (char *)malloc(sizeof(char) * len);
-    memset(result, 0, len);
-    for (i = 0; i < len; i++)
+    char *result = (char *)malloc(sizeof(char) * strlen(str));
+    int res_len = 0;
+
+    for (int i = 0; i < strlen(str); i++)
     {
-        if (i != index)
+        if (!(i >= index && i < index + number))
         {
-            result[idex] = formula[i];
-            idex++;
+            result[res_len] = str[i];
+            res_len++;
+        }
+    }
+
+    return result;
+}
+
+char *replace_in_string(char *str, char *replace, char *with)
+{
+    char *result = malloc(sizeof(char) * (strlen(str) - strlen(replace) + strlen(with)) * 2);
+
+    for (int i = 0; i < strlen(str); i++)
+    {
+        if (strncmp(str + i, replace, strlen(replace)) == 0)
+        {
+            str = remove_elements_by_index(str, i, strlen(replace) - 1);
+            sprintf(result, "%s%s", result, with);
+        }
+        else
+        {
+
+            result[strlen(result)] = str[i];
         }
     }
     return result;

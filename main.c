@@ -23,23 +23,19 @@ double evaluate_expression(Expression);
 int main()
 {
 
+    // array expression;
     array expression = "12+( .34-a/24+b)*(123*helo*12/21)";
-    array variables = {'\0'};
 
-    char *exp;
+    Expression expr = {(char *)malloc(sizeof(char) * 100), (variable *)malloc(sizeof(variable) * 100), 0};
 
-    // printf("Enter an expression: ");
-    // scanf("%[^\n]s", expression);
+    printf("Enter expression: ");
+    scanf("%s", expr.expression);
 
-    variable vals = {"a", 12.2};
+    evaluate_expression(expr);
 
-    Expression expr = {expression, &vals, 0};
-    // evaluate_expression(expr);
-    expr.var_length = getVariables(expr);
+    // // printf("%d, %s\n", expr.var_length, expr.variables[0].name);
 
-    printf("%d, %s\n", expr.var_length, expr.variables[0].name);
-
-    // printf("\nThe result is: %lf\n", calculate(convert_postfix(exp)));
+    // printf("\nThe result is: %lf\n", calculate(convert_postfix(expr.expression)));
 
     return 0;
 }
@@ -48,52 +44,12 @@ double evaluate_expression(Expression expression)
 {
     expression.expression = remove_spaces(expression.expression);
 
-    char *new_expression_expression = (char *)malloc(sizeof(char) * strlen(expression.expression) * 2);
-
-    char variables[100][100];
-    int variables_index = 0;
+    expression.var_length = 0;
 
     if (is_expression_ok(expression.expression) == TRUE)
     {
-        for (int i = 0; i < strlen(expression.expression); i++)
-        {
-            int index = -1;
-            char variable[100] = "\0";
-
-            for (int j = i; j < strlen(expression.expression); j++)
-            {
-                if (j == i)
-                    index = j;
-                if ((expression.expression[j] >= 'a' && expression.expression[j] <= 'z') || (expression.expression[j] >= 'Z' && expression.expression[j] <= 'Z'))
-                {
-                    variable[strlen(variable)] = expression.expression[j];
-                    i++;
-                }
-                else
-                    break;
-            }
-            if (strlen(variable) > 0)
-            {
-                strcpy(variables[variables_index], variable);
-                variables_index++;
-            }
-        }
-
-        char notdefinedvars[100][100];
-        int notdefinedvarsindex = 0;
-
-        for (int i = 0; i < variables_index; i++)
-        {
-            int isPresent = FALSE;
-            for (int j = 0; j < expression.var_length; j++)
-            {
-                if (strcmp(expression.variables[j].name, variables[i]) == 0)
-                {
-                    isPresent = TRUE;
-                    break;
-                }
-            }
-        }
+        expression.var_length = getVariables(expression);
+        printf("result: %g\n", calculate(convert_postfix(format_expression(replaceVariables(expression)))));
     }
     else
     {

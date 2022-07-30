@@ -22,7 +22,7 @@ int is_expression_ok(char *str)
               (str[i] == '/') ||
               (str[i] == '(') ||
               (str[i] == ')') ||
-              (str[i] == '+')))
+              (str[i] == '^')))
         {
             isCorrect = 0;
         }
@@ -110,7 +110,6 @@ char *convert_postfix(char *expression)
                 number = number + (expression[i] - '0') / pow(10, decimals);
                 decimals++;
             }
-
             continue;
         }
         // handle decimal point
@@ -136,20 +135,20 @@ char *convert_postfix(char *expression)
             {
                 char stack_top = stack[strlen(stack) - 1];
                 sprintf(buf + strlen(buf), "%c", stack_top);
-                stack = remove_element_by_index(stack, strlen(stack) - 1);
+                stack = remove_elements_by_index(stack, strlen(stack) - 1, 1);
             }
             sprintf(stack + strlen(stack), "%c", expression[i]);
             continue;
         }
         // handle operator '*' and '/'
-        if (expression[i] == '*' || expression[i] == '/')
+        if (expression[i] == '*' || expression[i] == '/' || expression[i] == '^')
         {
             while (strlen(stack) > 0 &&
-                   (stack[strlen(stack) - 1] == '*' || stack[strlen(stack) - 1] == '/'))
+                   (stack[strlen(stack) - 1] == '*' || stack[strlen(stack) - 1] == '/' || stack[strlen(stack) - 1] == '^'))
             {
                 char stack_top = stack[strlen(stack) - 1];
                 sprintf(buf + strlen(buf), "%c", stack_top);
-                stack = remove_element_by_index(stack, strlen(stack) - 1);
+                stack = remove_elements_by_index(stack, strlen(stack) - 1, 1);
             }
             sprintf(stack + strlen(stack), "%c", expression[i]);
             continue;
@@ -167,9 +166,9 @@ char *convert_postfix(char *expression)
             {
                 char stack_top = stack[strlen(stack) - 1];
                 sprintf(buf + strlen(buf), "%c", stack_top);
-                stack = remove_element_by_index(stack, strlen(stack) - 1);
+                stack = remove_elements_by_index(stack, strlen(stack) - 1, 1);
             }
-            stack = remove_element_by_index(stack, strlen(stack) - 1);
+            stack = remove_elements_by_index(stack, strlen(stack) - 1, 1);
             continue;
         }
     }
@@ -237,6 +236,8 @@ double calculate(char *formula)
             case '/':
                 result += n2 / n1;
                 break;
+            case '^':
+                result += pow(n2, n1);
             }
             stack[stack_count - 1] = 0;
             stack[stack_count - 2] = 0;
@@ -252,8 +253,7 @@ int getVariables(Expression exp)
 {
     int len = strlen(exp.expression);
     char *final = (char *)malloc(sizeof(char) * len * 2);
-    variable vars[100];
-    int vars_len = 0;
+
     for (int i = 0; i < len; i++)
     {
         char str[100] = "";
@@ -271,22 +271,22 @@ int getVariables(Expression exp)
         {
             double value;
             int isPresent = FALSE;
-            for (int j = 0; j < vars_len; j++)
+            for (int j = 0; j < exp.var_length; j++)
             {
-                if (strcmp(str, vars[j].name) == 0)
+                if (strcmp(str, exp.variables[j].name) == 0)
                 {
                     isPresent = TRUE;
                     break;
                 }
             }
 
-            if (isPresent == FALSE && strcmp(vars[i].name, str) != 0)
+            if (isPresent == FALSE && strcmp(exp.variables[i].name, str) != 0)
             {
                 printf("Enter the value of %s: ", str);
                 scanf("%lf", &value);
-                strcpy(vars[vars_len].name, str);
-                vars[vars_len].value = value;
-                vars_len++;
+                strcpy(exp.variables[exp.var_length].name, str);
+                exp.variables[exp.var_length].value = value;
+                exp.var_length++;
             }
 
             strcpy(str, "");
@@ -294,11 +294,20 @@ int getVariables(Expression exp)
         }
     }
 
-    exp.variables = vars;
-
-    return vars_len;
+    return exp.var_length;
 }
 
-void replaceVariables(){
-    
+char *replaceVariables(Expression exp)
+{
+    char *new_exp = (char *)malloc(sizeof(char) * strlen(exp.expression) * 2);
+    strcpy(new_exp, exp.expression);
+    char *with = malloc(strlen(exp.expression) * sizeof(char));
+
+    for (int i = 0; i < exp.var_length; i++)
+    {
+        sprintf(with, "%g", exp.variables[i].value);
+        strcpy(new_exp, replace_in_string(new_exp, exp.variables[i].name, with));
+    }
+
+    return new_exp;
 }
