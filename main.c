@@ -23,7 +23,7 @@ double evaluate_expression(Expression);
 int main()
 {
 
-    array expression = "12+( .34-aashirbad/24+b)*(123*12/21)";
+    array expression = "12+( .34-a/24+b)*(123*helo*12/21)";
     array variables = {'\0'};
 
     char *exp;
@@ -31,10 +31,13 @@ int main()
     // printf("Enter an expression: ");
     // scanf("%[^\n]s", expression);
 
-    variable vals[] = {{"a", 12.2}};
+    variable vals = {"a", 12.2};
 
-    Expression expr = {expression, vals, 0};
-    evaluate_expression(expr);
+    Expression expr = {expression, &vals, 0};
+    // evaluate_expression(expr);
+    expr.var_length = getVariables(expr);
+
+    printf("%d, %s\n", expr.var_length, expr.variables[0].name);
 
     // printf("\nThe result is: %lf\n", calculate(convert_postfix(exp)));
 
@@ -45,7 +48,7 @@ double evaluate_expression(Expression expression)
 {
     expression.expression = remove_spaces(expression.expression);
 
-    char *new_expression_expression = (char *)malloc(sizeof(char) * strlen(expression.expression));
+    char *new_expression_expression = (char *)malloc(sizeof(char) * strlen(expression.expression) * 2);
 
     char variables[100][100];
     int variables_index = 0;

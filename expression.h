@@ -247,3 +247,58 @@ double calculate(char *formula)
 
     return stack[0];
 }
+
+int getVariables(Expression exp)
+{
+    int len = strlen(exp.expression);
+    char *final = (char *)malloc(sizeof(char) * len * 2);
+    variable vars[100];
+    int vars_len = 0;
+    for (int i = 0; i < len; i++)
+    {
+        char str[100] = "";
+        int strl = 0;
+
+        while ((exp.expression[i] >= 'a' && exp.expression[i] <= 'z') || (exp.expression[i] >= 'Z' && exp.expression[i] <= 'Z'))
+        {
+            str[strl] = exp.expression[i];
+            str[strl + 1] = '\0';
+            strl++;
+            i++;
+        }
+
+        if (strlen(str) > 0)
+        {
+            double value;
+            int isPresent = FALSE;
+            for (int j = 0; j < vars_len; j++)
+            {
+                if (strcmp(str, vars[j].name) == 0)
+                {
+                    isPresent = TRUE;
+                    break;
+                }
+            }
+
+            if (isPresent == FALSE && strcmp(vars[i].name, str) != 0)
+            {
+                printf("Enter the value of %s: ", str);
+                scanf("%lf", &value);
+                strcpy(vars[vars_len].name, str);
+                vars[vars_len].value = value;
+                vars_len++;
+            }
+
+            strcpy(str, "");
+            strl = 0;
+        }
+    }
+
+    exp.variables = vars;
+
+    return vars_len;
+}
+
+void replaceVariables(){
+    
+}

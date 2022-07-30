@@ -18,7 +18,7 @@
 
 typedef struct variable
 {
-    char *name;
+    char name[100];
     double value;
 } variable;
 
