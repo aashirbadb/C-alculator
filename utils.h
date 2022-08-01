@@ -4,13 +4,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-
 // Clearscreen for different platforms
 #ifdef _WIN32
-#define clrscr() system("cls");
+#define clrscr() ({if (clscr == 1) system("cls"); })
 #else
 #include <stdio.h>
-#define clrscr() printf("\e[1;1H\e[2J")
+#define clrscr() ({if (clscr == 1) printf("\e[1;1H\e[2J"); })
 #endif
 
 #define TRUE 1
@@ -113,5 +112,13 @@ char *replace_in_string(char *str, char *replace, char *with)
 #define COLOR_MAGENTA "\x1b[35m"
 #define COLOR_CYAN "\x1b[36m"
 #define COLOR_RESET "\x1b[0m"
+
+#define COLOR_INFO "\x1b[36m"
+#define COLOR_ERROR "\x1b[31m"
+#define COLOR_SUCCESS "\x1b[32m"
+#define COLOR_INPUT "\x1b[33m"
 // display text in different color
 #define colorPrintf(color, format_string, ...) printf(color format_string "\x1b[0m"__VA_OPT__(, )__VA_ARGS__)
+#define print_error(format, ...) colorPrintf(COLOR_ERROR, format COLOR_RESET __VA_OPT__(, ) __VA_ARGS__)
+#define print_input(format, ...) colorPrintf(COLOR_INPUT, format COLOR_RESET __VA_OPT__(, ) __VA_ARGS__)
+#define print_success(format, ...) colorPrintf(COLOR_SUCCESS, format COLOR_RESET __VA_OPT__(, ) __VA_ARGS__)

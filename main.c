@@ -6,6 +6,7 @@
 #include "utils.h"
 #include "expression.h"
 #include "ui.h"
+#include "graph.h"
 
 enum modes
 {
@@ -16,17 +17,24 @@ enum modes
 void normal_mode();
 void history();
 
+int clscr = 1;
+
 int main(int argc, char *argv)
 {
-    int mode;
+	
+		int mode;
     char cont;
+
+    // if (argc == 1)
+    //     clscr = 0;
 
     while (1)
     {
     mode:
         clrscr();
         home_screen();
-        colorPrintf(COLOR_YELLOW, "Enter mode: ");
+        colorPrintf(COLOR_CYAN, "MODES: \n1.Normal\n2.History\n\n");
+        print_input("Enter mode: ");
         scanf("%d", &mode);
 
         clrscr();
@@ -55,11 +63,11 @@ void normal_mode()
     char cont;
     while (1)
     {
-        printf("Enter expression: ");
+        print_input("Enter expression: ");
         scanf("%s", expr.expression);
         clrscr();
         double result = evaluate_expression(expr);
-        printf("%s\n= %g\n", expr.expression, result);
+        print_success("%s = %g\n", expr.expression, result);
         fprintf(normal_history, "%s = %g\n", expr.expression, result);
         if (expr.var_length > 0)
         {
@@ -71,9 +79,9 @@ void normal_mode()
         }
 
         fprintf(normal_history, "\n");
-
-        printf("Continue[Y/N]: ");
+        print_input("Continue[Y/N]: ");
         scanf(" %c", &cont);
+        clrscr();
 
         if (cont == 'n' || cont == 'N')
         {
@@ -91,7 +99,7 @@ void history()
     while (1)
     {
         int mode;
-        printf("Enter mode of which you want to see history: ");
+        print_input("Enter mode of which you want to see history: ");
         scanf(" %d", &mode);
         char file[100];
         switch (mode)
@@ -116,7 +124,7 @@ void history()
                     ch = fgetc(fp);
                     if (ch == EOF)
                         break;
-                    printf("%c", ch);
+                    print_success("%c", ch);
                 }
             }
         }

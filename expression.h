@@ -331,7 +331,7 @@ double evaluate_expression(Expression expression)
     }
     else
     {
-        printf("Your expression is not correct.\n");
+        print_error("Your expression is not correct.\n");
         exit(-1);
     };
 }
