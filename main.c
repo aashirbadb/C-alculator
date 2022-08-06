@@ -1,6 +1,3 @@
-// A program to solve math problems entered by the user
-// Supports variable, input via file and put output to a file
-
 #include <stdio.h>
 #include <string.h>
 #include "utils.h"
