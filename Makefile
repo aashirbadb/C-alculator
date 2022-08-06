@@ -1,6 +1,3 @@
-CC = gcc
-CFLAGS = -lm -lgd -lpng -lz -ljpeg -lfreetype
-
 test: 
 	make compile && make run
 

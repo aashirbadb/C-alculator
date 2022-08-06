@@ -22,7 +22,8 @@ int is_expression_ok(char *str)
               (str[i] == '/') ||
               (str[i] == '(') ||
               (str[i] == ')') ||
-              (str[i] == '^')))
+              (str[i] == '^')) ||
+            str[i] == ' ')
         {
             isCorrect = 0;
         }
@@ -50,6 +51,11 @@ char *format_expression(char *expression)
     for (int i = 0; i < explen; i++)
     {
         // MODIFICATIONS BEFORE CURRENT CHARACTER
+
+        if (expression[i] == ' ')
+        {
+            continue;
+        }
 
         // replaces -123 or (-123) with 0-123
         if ((expression[i] == '-' && i == 0) || (expression[i] == '-' && expression[i - 1] == '('))
@@ -321,13 +327,14 @@ char *handle_trigonometric_functions(Expression exp)
 
 double evaluate_expression(Expression expression)
 {
-    expression.expression = remove_spaces(expression.expression);
-
-
     if (is_expression_ok(expression.expression) == TRUE)
     {
         expression.var_length = getVariables(expression);
-        return calculate(convert_postfix(format_expression(replaceVariables(expression))));
+        char *replaced_vars = replaceVariables(expression);
+        char *formatted_expression = format_expression(replaced_vars);
+        char *postfix_expression = convert_postfix(formatted_expression);
+
+        return calculate(postfix_expression);
     }
     else
     {

@@ -11,48 +11,48 @@
 enum modes
 {
     enormal = 1,
-    ehistory = 2,
+    ematrix,
+    ehistory,
 };
 
 void normal_mode();
 void history();
+void matrix_mode();
 
 int clscr = 1;
 
 int main(int argc, char *argv)
 {
-	
-	int mode;
+
+    int mode;
     char cont;
 
-    // if (argc == 1)
-    //     clscr = 0;
+    while (1)
+    {
+    mode:
+        clrscr();
+        home_screen();
+        colorPrintf(COLOR_CYAN, "MODES: \n1.Normal\n2.Matrix\n3.History\n");
+        print_input("Enter mode: ");
+        scanf("%d", &mode);
 
-    main_matrix();
-
-    // while (1)
-    // {
-    // mode:
-    //     clrscr();
-    //     home_screen();
-    //     colorPrintf(COLOR_CYAN, "MODES: \n1.Normal\n2.History\n\n");
-    //     print_input("Enter mode: ");
-    //     scanf("%d", &mode);
-
-    //     clrscr();
-    //     switch (mode)
-    //     {
-    //     case (enum modes)enormal:
-    //         normal_mode();
-    //         break;
-    //     case ehistory:
-    //         history();
-    //         break;
-    //     default:
-    //         goto quit;
-    //         break;
-    //     }
-    // }
+        clrscr();
+        switch (mode)
+        {
+        case (enum modes)enormal:
+            normal_mode();
+            break;
+        case ehistory:
+            history();
+            break;
+        case ematrix:
+            matrix_mode();
+            break;
+        default:
+            goto quit;
+            break;
+        }
+    }
 quit:
     return 0;
 }
@@ -133,6 +133,23 @@ void history()
 
         printf("Continue[Y/N]: ");
         scanf(" %c", &cont);
+        if (cont == 'n' || cont == 'N')
+        {
+            break;
+        }
+    }
+}
+
+void matrix_mode()
+{
+    char cont;
+    while (1)
+    {
+        main_matrix();
+        print_input("Continue[Y/N]: ");
+        scanf(" %c", &cont);
+        clrscr();
+
         if (cont == 'n' || cont == 'N')
         {
             break;

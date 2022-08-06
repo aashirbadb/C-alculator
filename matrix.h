@@ -1,14 +1,15 @@
 #pragma once
 
+#include "expression.h"
 #include <stdio.h>
 #include <stdlib.h>
 
-void read(double[100][100], int *, int *);
+void read_matrix(double **, int, int);
 void add();
 void subtract();
 void multiply();
 void transpose();
-void display(double res[100][100], int r, int c);
+void display(double **, int, int);
 
 enum choices
 {
@@ -19,8 +20,36 @@ enum choices
     m_exit
 };
 
+void rows_columns(int *rows, int *columns)
+{
+    printf("Rows: ");
+    scanf("%d", rows);
+    printf("Columns: ");
+    scanf("%d", columns);
+}
+
+double **create_matrix(int rows, int columns)
+{
+    double **arr = (double **)malloc(rows * sizeof(double *));
+    for (int i = 0; i < rows; i++)
+        arr[i] = (double *)malloc(columns * sizeof(double));
+
+    return arr;
+}
+
+void destroy_matrix(double **matrix, int rows, int columns)
+{
+    for (int i = 0; i < rows; i++)
+    {
+        free(matrix[i]);
+    }
+
+    free(matrix);
+}
+
 void main_matrix()
 {
+
     int choice;
     printf("Choose Matrix Operation\n");
     printf("----------------------------\n");
@@ -30,6 +59,7 @@ void main_matrix()
     printf("4. Transpose\n");
     printf("5. Exit\n");
     printf("----------------------------\n");
+    printf("Note: You can enter expressions like 2*(1+2) and a+b\n\n");
     printf("Enter your choice: ");
     scanf("%d", &choice);
 
@@ -57,75 +87,91 @@ void main_matrix()
     }
 }
 
-void read(double matrix[100][100], int *r, int *c)
+void read_matrix(double **matrix, int r, int c)
 {
-    printf("Enter rows: ");
-    scanf("%d", r);
-    printf("Enter columns: ");
-    scanf("%d", c);
     int i, j;
-    for (i = 0; i < *r; i++)
+
+    for (i = 0; i < r; i++)
     {
-        for (j = 0; j < *c; j++)
+        for (j = 0; j < c; j++)
         {
             Expression expr = {(char *)malloc(sizeof(char) * 100), (variable *)malloc(sizeof(variable) * 100), 0};
-
             printf("[%d][%d]: ", i + 1, j + 1);
-            scanf("%f", expr.expression);
+            scanf("%s", expr.expression);
+            matrix[i][j] = evaluate_expression(expr);
         }
     }
 }
 
 void add()
 {
-    int mat1[100][100], mat2[100][100], res[100][100], r1, r2, c1, c2, i, j;
-    read(mat1, &r1, &c1);
-    read(mat2, &r2, &c2);
-    if (r1 == r2 && c1 == c2)
+    int r, c, i, j;
+    rows_columns(&r, &c);
+    double **mat1 = create_matrix(r, c);
+    double **mat2 = create_matrix(r, c);
+    double **res = create_matrix(r, c);
+
+    read_matrix(mat1, r, c);
+    read_matrix(mat2, r, c);
+    for (i = 0; i < r; i++)
     {
-        for (i = 0; i < r1; i++)
+        for (j = 0; j < c; j++)
         {
-            for (j = 0; j < c2; j++)
-            {
-                res[i][j] = mat1[i][j] + mat2[i][j];
-            }
+            res[i][j] = mat1[i][j] + mat2[i][j];
         }
     }
-    else
-    {
-        print_error("Error: Calculation cannot be performed.\n");
-    }
+
+    display(res, r, c);
+
+    destroy_matrix(mat1, r, c);
+    destroy_matrix(mat2, r, c);
+    destroy_matrix(res, r, c);
 }
 
 void subtract()
 {
-    int mat1[100][100], mat2[100][100], res[100][100], r1, r2, c1, c2, i, j;
-    read(mat1, &r1, &c1);
-    read(mat2, &r2, &c2);
-    if (r1 == r2 && c1 == c2)
+    int r, c, i, j;
+    rows_columns(&r, &c);
+
+    double **mat1 = create_matrix(r, c);
+    double **mat2 = create_matrix(r, c);
+    double **res = create_matrix(r, c);
+
+    read_matrix(mat1, r, c);
+    read_matrix(mat2, r, c);
+    for (i = 0; i < r; i++)
     {
-        for (i = 0; i < r1; i++)
+        for (j = 0; j < c; j++)
         {
-            for (j = 0; j < c2; j++)
-            {
-                res[i][j] = mat1[i][j] - mat2[i][j];
-            }
+            res[i][j] = mat1[i][j] - mat2[i][j];
         }
     }
-    else
-    {
-        print_error("Error: Calculation cannot be performed.\n");
-    }
+
+    display(res, r, c);
+
+    destroy_matrix(mat1, r, c);
+    destroy_matrix(mat2, r, c);
+    destroy_matrix(res, r, c);
 }
+
 void multiply()
 {
-    int mat1[100][100], mat2[100][100], res[100][100], r1, r2, c1, c2, i, j, k;
-    read(mat1, &r1, &c1);
-    read(mat2, &r2, &c2);
+    int r1, r2, c1, c2, i, j, k;
+    rows_columns(&r1, &c1);
 
-    for (i = 0; i < 100; i++)
+    double **mat1 = create_matrix(r1, c1);
+    read_matrix(mat1, r1, c1);
+
+    rows_columns(&r2, &c2);
+
+    double **mat2 = create_matrix(r2, c2);
+    read_matrix(mat2, r2, c2);
+
+    double **res = create_matrix(r1, c2);
+
+    for (i = 0; i < c1; i++)
     {
-        for (j = 0; j < 100; j++)
+        for (j = 0; j < r2; j++)
         {
             res[i][j] = 0;
         }
@@ -149,22 +195,35 @@ void multiply()
     {
         print_error("Error: The matrices cannot be multiplied\n");
     }
+
+    destroy_matrix(mat1, r1, c1);
+    destroy_matrix(mat2, r2, c2);
+    destroy_matrix(res, r1, c2);
 }
 
 void transpose()
 {
-    double mat[100][100], res[100][100];
     int i, j, r, c;
-    for (i = 0; i < r; i++)
+
+    rows_columns(&r, &c);
+
+    double **mat = create_matrix(r, c);
+    double **res = create_matrix(c, r);
+
+    read_matrix(mat, r, c);
+    for (i = 0; i < c; i++)
     {
-        for (j = 0; j < c; j++)
+        for (j = 0; j < r; j++)
         {
             res[i][j] = mat[j][i];
         }
     }
+    display(res, c, r);
+    destroy_matrix(mat, r, c);
+    destroy_matrix(res, c, r);
 }
 
-void display(double res[100][100], int r, int c)
+void display(double **res, int r, int c)
 {
     int i, j;
     for (i = 0; i < r; i++)

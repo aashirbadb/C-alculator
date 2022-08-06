@@ -47,7 +47,7 @@ char *remove_spaces(char *string)
         }
     }
 
-    formatted = (char *)realloc(formatted, sizeof(char) * strlen(string));
+    printf("fmt :%s", formatted);
 
     return formatted;
 }
