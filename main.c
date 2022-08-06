@@ -6,7 +6,7 @@
 #include "utils.h"
 #include "expression.h"
 #include "ui.h"
-#include "graph.h"
+#include "matrix.h"
 
 enum modes
 {
@@ -22,35 +22,37 @@ int clscr = 1;
 int main(int argc, char *argv)
 {
 	
-		int mode;
+	int mode;
     char cont;
 
     // if (argc == 1)
     //     clscr = 0;
 
-    while (1)
-    {
-    mode:
-        clrscr();
-        home_screen();
-        colorPrintf(COLOR_CYAN, "MODES: \n1.Normal\n2.History\n\n");
-        print_input("Enter mode: ");
-        scanf("%d", &mode);
+    main_matrix();
 
-        clrscr();
-        switch (mode)
-        {
-        case (enum modes)enormal:
-            normal_mode();
-            break;
-        case ehistory:
-            history();
-            break;
-        default:
-            goto quit;
-            break;
-        }
-    }
+    // while (1)
+    // {
+    // mode:
+    //     clrscr();
+    //     home_screen();
+    //     colorPrintf(COLOR_CYAN, "MODES: \n1.Normal\n2.History\n\n");
+    //     print_input("Enter mode: ");
+    //     scanf("%d", &mode);
+
+    //     clrscr();
+    //     switch (mode)
+    //     {
+    //     case (enum modes)enormal:
+    //         normal_mode();
+    //         break;
+    //     case ehistory:
+    //         history();
+    //         break;
+    //     default:
+    //         goto quit;
+    //         break;
+    //     }
+    // }
 quit:
     return 0;
 }
