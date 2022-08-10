@@ -54,3 +54,4 @@ build/main
 *.txt
 *.log
 *.json
+!constants.txt

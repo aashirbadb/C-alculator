@@ -1,15 +1,17 @@
 #pragma once
 
 #include <math.h>
+#include <string.h>
+#include <stdio.h>
 #include "utils.h"
 
 enum errors
 {
     correct = 0,
     letter_num
-}
+};
 
-is_expression_ok(char *str)
+int is_expression_ok(char *str)
 {
     int isCorrect = 1, left = 0, right = 0;
 
@@ -271,7 +273,7 @@ int getVariables(Expression exp)
         char str[100] = "";
         int strl = 0;
 
-        while ((exp.expression[i] >= 'a' && exp.expression[i] <= 'z') || (exp.expression[i] >= 'Z' && exp.expression[i] <= 'Z'))
+        while ((exp.expression[i] >= 'a' && exp.expression[i] <= 'z') || (exp.expression[i] >= 'A' && exp.expression[i] <= 'Z'))
         {
             str[strl] = exp.expression[i];
             str[strl + 1] = '\0';

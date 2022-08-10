@@ -2,6 +2,7 @@
 #ifndef _WIN32
 #include <sys/ioctl.h>
 #endif
+#include <stdlib.h>
 
 // Clearscreen for different platforms
 #ifdef _WIN32
@@ -65,7 +66,7 @@ int is_operator(char ch)
 
 int is_letter(char ch)
 {
-    if ((ch >= 'a' && ch <= 'z') || (ch >= 'Z' && ch <= 'Z'))
+    if ((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z'))
         return TRUE;
     else
         return FALSE;
@@ -130,6 +131,20 @@ void destroy_matrix(double **matrix, int rows, int columns)
 Expression createExpression()
 {
     Expression expr = {(char *)malloc(sizeof(char) * 100), (variable *)malloc(sizeof(variable) * 100), 0};
+
+    FILE *file = fopen("constants.txt", "r");
+    if (file != NULL)
+    {
+        char name[100];
+        double value;
+        while (fscanf(file, "%s%lf", name, &value) != EOF)
+        {
+            strcpy(expr.variables[expr.var_length].name, name);
+            expr.variables[expr.var_length].value = value;
+            expr.var_length++;
+        }
+    }
+
     strcpy(expr.expression, "");
     return expr;
 }
@@ -149,7 +164,7 @@ void center(char *string)
     ioctl(0, TIOCGWINSZ, &w); // gets no of rows and columns in terminal window
     int spaces = (w.ws_col - strlen(string)) / 2;
 #else
-    int spaces = 10;
+    int spaces = 15;
 #endif
     printf(MAGENTA);
 
