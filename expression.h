@@ -278,5 +278,6 @@ double evaluate_expression(Expression expression) {
         return calculate(postfix_expression);
     } else {
         print_error("Your expression is not correct.\n");
+        return 0;
     };
 }
