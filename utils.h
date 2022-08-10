@@ -1,5 +1,7 @@
 #pragma once
+#ifdef _IOCTL_H_
 #include <sys/ioctl.h>
+#endif
 
 // Clearscreen for different platforms
 #ifdef _WIN32
@@ -135,9 +137,13 @@ Expression createExpression()
 // Centers the text
 void center(char *string)
 {
+#ifdef _IOCTL_H_
     struct winsize w;
     ioctl(0, TIOCGWINSZ, &w); // gets no of rows and columns in terminal window
     int spaces = (w.ws_col - strlen(string)) / 2;
+#else
+    int spaces = 10;
+#endif
     printf(MAGENTA);
 
     for (int i = 0; i < spaces; i++)
