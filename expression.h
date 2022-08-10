@@ -244,11 +244,6 @@ int getVariables(Expression exp) {
                 exp.variables[j + 1] = temp;
             }
     }
-
-    for (int i = 0; i < exp.var_length; i++) {
-        printf("%s=%g\n", exp.variables[i].name, exp.variables[i].value);
-    }
-
     return exp.var_length;
 }
 
@@ -280,9 +275,6 @@ double evaluate_expression(Expression expression) {
         char *replaced_vars = replaceVariables(expression);
         char *formatted_expression = format_expression(replaced_vars);
         char *postfix_expression = convert_postfix(formatted_expression);
-        printf("%s\n", postfix_expression);
-        ;
-
         return calculate(postfix_expression);
     } else {
         print_error("Your expression is not correct.\n");
