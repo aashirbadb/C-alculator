@@ -1,5 +1,5 @@
 #pragma once
-#ifdef _IOCTL_H_
+#ifndef _WIN32
 #include <sys/ioctl.h>
 #endif
 
@@ -134,10 +134,17 @@ Expression createExpression()
     return expr;
 }
 
+void freeExpression(Expression exp)
+{
+    free(exp.expression);
+    free(exp.variables);
+}
+
 // Centers the text
 void center(char *string)
 {
-#ifdef _IOCTL_H_
+
+#ifdef _SYS_IOCTL_H
     struct winsize w;
     ioctl(0, TIOCGWINSZ, &w); // gets no of rows and columns in terminal window
     int spaces = (w.ws_col - strlen(string)) / 2;

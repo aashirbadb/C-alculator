@@ -199,7 +199,7 @@ double calculate(char *formula)
     int formula_len = strlen(formula);
     double *stack = (double *)malloc(sizeof(double) * formula_len * 2);
     int stack_count = 0;
-    double number = 0;
+    double number = 0, result;
     int decimals = 0;
     int i;
     for (i = 0; i < formula_len; ++i)
@@ -257,14 +257,14 @@ double calculate(char *formula)
             stack[stack_count++] = result;
         }
     }
-
-    return stack[0];
+    result = stack[0];
+    free(stack);
+    return result;
 }
 
 int getVariables(Expression exp)
 {
     int len = strlen(exp.expression);
-    char *final = (char *)malloc(sizeof(char) * len * 2);
 
     for (int i = 0; i < len; i++)
     {
@@ -320,7 +320,7 @@ char *replaceVariables(Expression exp)
         sprintf(with, "%g", exp.variables[i].value);
         strcpy(new_exp, replace_in_string(new_exp, exp.variables[i].name, with));
     }
-
+    free(with);
     return new_exp;
 }
 

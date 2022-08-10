@@ -43,6 +43,8 @@ void read_matrix(double **matrix, int r, int c, char identifier)
                 scanf("%s", expr.expression);
                 ok = is_expression_ok(expr.expression);
                 matrix[i][j] = evaluate_expression(expr);
+                free(expr.expression);
+                free(expr.variables);
             }
         }
     }

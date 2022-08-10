@@ -49,6 +49,10 @@ void quadratic()
         print_result("%g\n", root2);
     }
     getch();
+
+    freeExpression(ea);
+    freeExpression(eb);
+    freeExpression(ec);
 }
 
 void gaussian_elimination(int n)
