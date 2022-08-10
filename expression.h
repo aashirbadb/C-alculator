@@ -1,31 +1,39 @@
 #pragma once
 
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
 #include <math.h>
 #include "utils.h"
 
-int is_expression_ok(char *str)
+enum errors
+{
+    correct = 0,
+    letter_num
+}
+
+is_expression_ok(char *str)
 {
     int isCorrect = 1, left = 0, right = 0;
 
     for (int i = 0; i < strlen(str); i++)
     {
-        if (!((str[i] >= 'a' && str[i] <= 'z') ||
-              (str[i] >= 'Z' && str[i] <= 'Z') ||
-              (str[i] >= '0' && str[i] <= '9') ||
-              (str[i] == '.') ||
-              (str[i] == '+') ||
-              (str[i] == '-') ||
-              (str[i] == '*') ||
-              (str[i] == '/') ||
-              (str[i] == '(') ||
-              (str[i] == ')') ||
-              (str[i] == '^')) ||
-            str[i] == ' ')
+        if (!(is_letter(str[i]) || is_number(str[i]) || is_operator(str[i]) || str[i] == '.' || str[i] == ' ' || str[i] == '(' || str[i] == ')'))
         {
             isCorrect = 0;
+            print_error("Your expression contains invalid characters.\n");
+            print_error("You can only enter letters, numbers, operators, brackets[\'(\' and \')\'] and spaces.\n");
+            break;
+        }
+
+        if ((is_number(str[i]) && is_letter(str[i + 1])) || (is_letter(str[i]) && is_number(str[i + 1])))
+        {
+            print_error("You enter a letter immediately before and after a number. Please use * to separate them.\n");
+            isCorrect = 0;
+            break;
+        }
+        if ((str[i] == '.' && is_letter(str[i + 1])) || (is_letter(str[i]) && str[i + 1] == '.'))
+        {
+            print_error("You enter a decimal point(.) immediately before and after a number. Please use * to separate them.\n");
+            isCorrect = 0;
+            break;
         }
     }
 
@@ -50,8 +58,6 @@ char *format_expression(char *expression)
 
     for (int i = 0; i < explen; i++)
     {
-        // MODIFICATIONS BEFORE CURRENT CHARACTER
-
         if (expression[i] == ' ')
         {
             continue;
@@ -64,20 +70,18 @@ char *format_expression(char *expression)
         }
 
         // replaces .1 with 0.1
-        if ((expression[i] == '.' && i == 0) || (expression[i] == '.' && is_number(expression[i - 1]) == FALSE))
+        if ((expression[i] == '.' && i == 0) || (expression[i] == '.' && is_number(expression[i - 1]) == 0))
         {
             strcat(new_exp, "0");
         }
 
-        // ADDS THE CURRENT CHARACTER TO THE NEW EXPRESSION
+        // add current character to the expression
         new_exp[strlen(new_exp)] = expression[i];
-
-        // MODIFICATINS AFTER CURRENT CHARACTER
 
         // replaces 2(4) or (2)4 with 2*(4)
         if (
-            (is_number(expression[i]) == TRUE) && (expression[i + 1] == '(') ||
-            ((expression[i] == ')') && is_number(expression[i + 1]) == TRUE))
+            (is_number(expression[i]) == 1) && (expression[i + 1] == '(') ||
+            ((expression[i] == ')') && is_number(expression[i + 1]) == 1))
         {
             strcat(new_exp, "*");
         }
@@ -125,7 +129,7 @@ char *convert_postfix(char *expression)
             continue;
         }
 
-        // Assign number to buf if meet the char of number end.
+        // Assign number to buf if number ends
         if (expression[i] == '_')
         {
             sprintf(buf + strlen(buf), "%g", number);
@@ -134,6 +138,7 @@ char *convert_postfix(char *expression)
             decimals = 0;
             continue;
         }
+
         // handle operator '+' and '-'
         if (expression[i] == '+' || expression[i] == '-')
         {
@@ -149,8 +154,7 @@ char *convert_postfix(char *expression)
         // handle operator '*' and '/'
         if (expression[i] == '*' || expression[i] == '/' || expression[i] == '^')
         {
-            while (strlen(stack) > 0 &&
-                   (stack[strlen(stack) - 1] == '*' || stack[strlen(stack) - 1] == '/' || stack[strlen(stack) - 1] == '^'))
+            while (strlen(stack) > 0 && (stack[strlen(stack) - 1] == '*' || stack[strlen(stack) - 1] == '/' || stack[strlen(stack) - 1] == '^'))
             {
                 char stack_top = stack[strlen(stack) - 1];
                 sprintf(buf + strlen(buf), "%c", stack_top);
@@ -184,6 +188,8 @@ char *convert_postfix(char *expression)
     {
         sprintf(buf + strlen(buf), "%c", stack[i]);
     }
+
+    free(stack);
 
     return buf;
 }
@@ -276,19 +282,19 @@ int getVariables(Expression exp)
         if (strlen(str) > 0)
         {
             double value;
-            int isPresent = FALSE;
+            int isPresent = 0;
             for (int j = 0; j < exp.var_length; j++)
             {
                 if (strcmp(str, exp.variables[j].name) == 0)
                 {
-                    isPresent = TRUE;
+                    isPresent = 1;
                     break;
                 }
             }
 
-            if (isPresent == FALSE && strcmp(exp.variables[i].name, str) != 0)
+            if (isPresent == 0 && strcmp(exp.variables[i].name, str) != 0)
             {
-                printf("Enter the value of %s: ", str);
+                print_input("\tEnter the value of %s: ", str);
                 scanf("%lf", &value);
                 strcpy(exp.variables[exp.var_length].name, str);
                 exp.variables[exp.var_length].value = value;
@@ -318,16 +324,9 @@ char *replaceVariables(Expression exp)
     return new_exp;
 }
 
-char *handle_trigonometric_functions(Expression exp)
-{
-    char *new_exp = (char *)malloc(sizeof(char) * 1000);
-
-    return new_exp;
-}
-
 double evaluate_expression(Expression expression)
 {
-    if (is_expression_ok(expression.expression) == TRUE)
+    if (is_expression_ok(expression.expression) == 1)
     {
         expression.var_length = getVariables(expression);
         char *replaced_vars = replaceVariables(expression);
@@ -339,6 +338,5 @@ double evaluate_expression(Expression expression)
     else
     {
         print_error("Your expression is not correct.\n");
-        exit(-1);
     };
 }

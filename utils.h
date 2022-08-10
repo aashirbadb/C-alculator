@@ -1,19 +1,34 @@
 #pragma once
+#include <sys/ioctl.h>
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <math.h>
 // Clearscreen for different platforms
 #ifdef _WIN32
-#define clrscr() ({if (clscr == 1) system("cls"); })
+#define clrscr() system("cls");
 #else
-#include <stdio.h>
-#define clrscr() ({if (clscr == 1) printf("\e[1;1H\e[2J"); })
+#define clrscr() system("clear");
 #endif
 
 #define TRUE 1
 #define FALSE 0
+
+#define RED "\x1b[31m"
+#define GREEN "\x1b[32m"
+#define YELLOW "\x1b[33m"
+#define BLUE "\x1b[34m"
+#define MAGENTA "\x1b[35m"
+#define CYAN "\x1b[36m"
+#define RESET "\x1b[0m"
+// display text in different color
+#define colorPrintf(color, format_string, ...) printf(color format_string RESET __VA_OPT__(, ) __VA_ARGS__)
+#define print_info(format_string, ...) printf(BLUE format_string RESET __VA_OPT__(, ) __VA_ARGS__)
+#define print_input(format_string, ...) printf(YELLOW format_string RESET __VA_OPT__(, ) __VA_ARGS__)
+#define print_error(format_string, ...) printf(RED format_string RESET __VA_OPT__(, ) __VA_ARGS__)
+#define print_options(format_string, ...) printf(CYAN format_string RESET __VA_OPT__(, ) __VA_ARGS__)
+#define print_result(format_string, ...) printf(GREEN format_string RESET __VA_OPT__(, ) __VA_ARGS__)
+
+#define getch() \
+    getchar();  \
+    getchar();
 
 typedef char array[100];
 
@@ -30,28 +45,6 @@ typedef struct Expression
     int var_length;
 } Expression;
 
-char *remove_spaces(char *);
-char *remove_elements_by_index(char *, int, int);
-int isNumber(char);
-int isOperator(char);
-
-char *remove_spaces(char *string)
-{
-    char *formatted = (char *)malloc(strlen(string) * sizeof(char));
-    memset(formatted, 0, strlen(string) * sizeof(char));
-    for (int i = 0; i < strlen(string); i++)
-    {
-        if (string[i] != ' ')
-        {
-            formatted[strlen(formatted)] = string[i];
-        }
-    }
-
-    printf("fmt :%s", formatted);
-
-    return formatted;
-}
-
 int is_number(char ch)
 {
     if (ch >= '0' && ch <= '9')
@@ -63,6 +56,14 @@ int is_number(char ch)
 int is_operator(char ch)
 {
     if (ch == '+' || ch == '-' || ch == '*' || ch == '/' || ch == '^')
+        return TRUE;
+    else
+        return FALSE;
+}
+
+int is_letter(char ch)
+{
+    if ((ch >= 'a' && ch <= 'z') || (ch >= 'Z' && ch <= 'Z'))
         return TRUE;
     else
         return FALSE;
@@ -105,20 +106,43 @@ char *replace_in_string(char *str, char *replace, char *with)
     return result;
 }
 
-#define COLOR_RED "\x1b[31m"
-#define COLOR_GREEN "\x1b[32m"
-#define COLOR_YELLOW "\x1b[33m"
-#define COLOR_BLUE "\x1b[34m"
-#define COLOR_MAGENTA "\x1b[35m"
-#define COLOR_CYAN "\x1b[36m"
-#define COLOR_RESET "\x1b[0m"
+double **create_matrix(int rows, int columns)
+{
+    double **arr = (double **)malloc(rows * sizeof(double *));
+    for (int i = 0; i < rows; i++)
+        arr[i] = (double *)malloc(columns * sizeof(double));
 
-#define COLOR_INFO "\x1b[36m"
-#define COLOR_ERROR "\x1b[31m"
-#define COLOR_SUCCESS "\x1b[32m"
-#define COLOR_INPUT "\x1b[33m"
-// display text in different color
-#define colorPrintf(color, format_string, ...) printf(color format_string "\x1b[0m"__VA_OPT__(, )__VA_ARGS__)
-#define print_error(format, ...) colorPrintf(COLOR_ERROR, format COLOR_RESET __VA_OPT__(, ) __VA_ARGS__)
-#define print_input(format, ...) colorPrintf(COLOR_INPUT, format COLOR_RESET __VA_OPT__(, ) __VA_ARGS__)
-#define print_success(format, ...) colorPrintf(COLOR_SUCCESS, format COLOR_RESET __VA_OPT__(, ) __VA_ARGS__)
+    return arr;
+}
+
+void destroy_matrix(double **matrix, int rows, int columns)
+{
+    for (int i = 0; i < rows; i++)
+    {
+        free(matrix[i]);
+    }
+
+    free(matrix);
+}
+
+Expression createExpression()
+{
+    Expression expr = {(char *)malloc(sizeof(char) * 100), (variable *)malloc(sizeof(variable) * 100), 0};
+    strcpy(expr.expression, "");
+    return expr;
+}
+
+// Centers the text
+void center(char *string)
+{
+    struct winsize w;
+    ioctl(0, TIOCGWINSZ, &w); // gets no of rows and columns in terminal window
+    int spaces = (w.ws_col - strlen(string)) / 2;
+    printf(MAGENTA);
+
+    for (int i = 0; i < spaces; i++)
+        printf(" ");
+
+    printf("%s\n", string);
+    printf(RESET);
+}

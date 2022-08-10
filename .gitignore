@@ -51,4 +51,6 @@ Module.symvers
 Mkfile.old
 dkms.conf
 build/main
-normal_history.txt
+*.txt
+*.log
+*.json
