@@ -25,7 +25,6 @@ enum matrix_modes {
 
 enum quadratic_modes {
     quadratic_equation = 1,
-    cubic_equation,
     linear_equation_2,
     linear_equation_3,
     linear_equation,
@@ -199,18 +198,15 @@ void quadratic_mode() {
         center("|___________________________________________________|");
         print_options("\n\nOPERATIONS:\n");
         print_options("1.ax^2+bx+c=0\n");
-        print_options("2.ax^3+bx^2+cx+d=0\n");
-        print_options("3.anx+bnx=cn\n");
-        print_options("4.anx+bnx+cnx=d\n");
-        print_options("5.ax1+bx2+cx3+...=z\n");
-        print_options("6.Exit\n");
+        print_options("2.anx+bnx=cn\n");
+        print_options("3.anx+bnx+cnx=d\n");
+        print_options("4.ax1+bx2+cx3+...=z\n");
+        print_options("5.Exit\n");
         print_input("\nEnter your choice: ");
         scanf("%d", &choice);
         switch (choice) {
             case quadratic_equation:
                 quadratic();
-                break;
-            case cubic_equation:
                 break;
             case linear_equation_2:
                 gaussian_elimination(2);
