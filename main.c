@@ -40,7 +40,7 @@ int main(int argc, char *argv) {
     int mode;
     char cont;
     while (cont != 'n') {
-        // clrscr();
+        clrscr();
         center(" ___________________________________________________________________ ");
         center("|    ___                _               _         _                 |");
         center("|   / __\\         __ _ | |  ___  _   _ | |  __ _ | |_   ___   _ __  |");

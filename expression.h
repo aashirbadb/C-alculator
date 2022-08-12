@@ -5,6 +5,8 @@
 
 #include "utils.h"
 
+double evaluate_expression(Expression expression);
+
 enum errors {
     correct = 0,
     letter_num
@@ -217,7 +219,7 @@ int getVariables(Expression exp) {
             i++;
         }
         if (strlen(str) > 0) {
-            double value;
+            double value = 0.0;
             int isPresent = 0;
             for (int j = 0; j < exp.var_length; j++) {
                 if (strcmp(str, exp.variables[j].name) == 0) {
@@ -226,8 +228,16 @@ int getVariables(Expression exp) {
                 }
             }
             if (isPresent == 0 && strcmp(exp.variables[i].name, str) != 0) {
-                print_input("\tEnter the value of %s: ", str);
-                scanf("%lf", &value);
+                int ok = -1;
+                while (ok != 1) {
+                    Expression expr = createExpression();
+                    scanf("%s", expr.expression);
+                    ok = is_expression_ok(expr.expression);
+                    value = evaluate_expression(expr);
+                    printf("%g", value);
+                    free(expr.expression);
+                    free(expr.variables);
+                }
                 strcpy(exp.variables[exp.var_length].name, str);
                 exp.variables[exp.var_length].value = value;
                 exp.var_length++;
