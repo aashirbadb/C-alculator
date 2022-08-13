@@ -12,22 +12,22 @@ void quadratic() {
     while (ok != 1) {
         printf("Enter a: ");
         scanf("%s", ea.expression);
-        ok = is_expression_ok(ea.expression);
+        ok = is_expression_ok(ea.expression, 1);
     }
+    a = evaluate_expression(ea);
     ok = -1;
     while (ok != 1) {
         printf("Enter b: ");
         scanf("%s", eb.expression);
-        ok = is_expression_ok(eb.expression);
+        ok = is_expression_ok(eb.expression, 1);
     }
+    b = evaluate_expression(eb);
     ok = -1;
     while (ok != 1) {
         printf("Enter c: ");
         scanf("%s", ec.expression);
-        ok = is_expression_ok(ec.expression);
+        ok = is_expression_ok(ec.expression, 1);
     }
-    a = evaluate_expression(ea);
-    b = evaluate_expression(eb);
     c = evaluate_expression(ec);
     d = b * b - 4 * a * c;
     if (d < 0) {
@@ -58,7 +58,7 @@ void gaussian_elimination(int n) {
             while (ok != 1) {
                 print_input("%c%d : ", 'A' + i - 1, j);
                 scanf("%s", exp.expression);
-                ok = is_expression_ok(exp.expression);
+                ok = is_expression_ok(exp.expression, 1);
             }
             A[i][j] = evaluate_expression(exp);
         }

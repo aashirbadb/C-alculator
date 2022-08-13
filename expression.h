@@ -12,15 +12,15 @@ enum errors {
     letter_num
 };
 
-int is_expression_ok(char *str) {
+int is_expression_ok(char *str, int allow_chars) {
     int isCorrect = 1, left = 0, right = 0;
     for (int i = 0; i < strlen(str); i++) {
-        if (!(is_letter(str[i]) || is_number(str[i]) || is_operator(str[i]) ||
+        if (!((allow_chars && is_letter(str[i])) || is_number(str[i]) || is_operator(str[i]) ||
               str[i] == '.' || str[i] == ' ' || str[i] == '(' ||
               str[i] == ')')) {
             isCorrect = 0;
             print_error("Your expression contains invalid characters.\n");
-            print_error("You can only enter letters, numbers, operators, brackets[\'(\' and \')\'] and spaces.\n");
+            print_error("You can only enter %snumbers, operators, brackets[\'(\' and \')\'] and spaces.\n", allow_chars ? "letters, " : "");
             break;
         }
         if ((is_number(str[i]) && is_letter(str[i + 1])) ||
@@ -201,9 +201,7 @@ double calculate(char *formula) {
             stack[stack_count++] = result;
         }
     }
-    result = stack[0];
-    free(stack);
-    return result;
+    return stack[0];
 }
 
 int getVariables(Expression exp) {
@@ -231,10 +229,12 @@ int getVariables(Expression exp) {
                 int ok = -1;
                 while (ok != 1) {
                     Expression expr = createExpression();
+                    print_input("\tEnter the value of %s: ", str);
+
                     scanf("%s", expr.expression);
-                    ok = is_expression_ok(expr.expression);
-                    value = evaluate_expression(expr);
-                    printf("%g", value);
+                    ok = is_expression_ok(expr.expression, 0);
+                    if (ok == 1)
+                        value = evaluate_expression(expr);
                     free(expr.expression);
                     free(expr.variables);
                 }
@@ -280,7 +280,7 @@ char *replaceVariables(Expression exp) {
 }
 
 double evaluate_expression(Expression expression) {
-    if (is_expression_ok(expression.expression) == 1) {
+    if (is_expression_ok(expression.expression, 1) == 1) {
         expression.var_length = getVariables(expression);
         char *replaced_vars = replaceVariables(expression);
         char *formatted_expression = format_expression(replaced_vars);

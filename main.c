@@ -8,7 +8,7 @@
 #include "utils.h"
 
 enum main_modes {
-    m_normal = 1,
+    m_normal = '1',
     m_matrix,
     m_equation,
     m_history,
@@ -16,7 +16,7 @@ enum main_modes {
 };
 
 enum matrix_modes {
-    mat_addition = 1,
+    mat_addition = '1',
     mat_subtraction,
     mat_multiplication,
     mat_transpose,
@@ -24,7 +24,7 @@ enum matrix_modes {
 };
 
 enum quadratic_modes {
-    quadratic_equation = 1,
+    quadratic_equation = '1',
     linear_equation_2,
     linear_equation_3,
     linear_equation,
@@ -37,8 +37,7 @@ void matrix_mode();
 void quadratic_mode();
 
 int main(int argc, char *argv) {
-    int mode;
-    char cont;
+    char mode, cont;
     while (cont != 'n') {
         clrscr();
         center(" ___________________________________________________________________ ");
@@ -52,7 +51,7 @@ int main(int argc, char *argv) {
         print_options(
             "\n\nMODES: \n1.Normal\n2.Matrix\n3.Equation\n4.History\n5.Exit\n");
         print_input("\nEnter mode: ");
-        scanf("%d", &mode);
+        scanf("%c", &mode);
 
         switch (mode) {
             case m_normal:
@@ -73,6 +72,7 @@ int main(int argc, char *argv) {
                 break;
             default:
                 print_error("Please enter a valid choice.\n\n");
+                getch();
                 break;
         }
     }
@@ -98,7 +98,7 @@ void normal_mode() {
         while (ok != 1) {
             printf("Enter expression: ");
             scanf("%s", expr.expression);
-            ok = is_expression_ok(expr.expression);
+            ok = is_expression_ok(expr.expression, 1);
         }
         if (strcmp(expr.expression, "q") == 0) break;
         double result = evaluate_expression(expr);
@@ -139,8 +139,7 @@ void history() {
 }
 
 void matrix_mode() {
-    char cont;
-    int choice;
+    char cont, choice;
     while (cont != 'n') {
         clrscr();
         center(" _____________________________________ ");
@@ -158,7 +157,7 @@ void matrix_mode() {
         print_options("5. Exit\n");
         print_info("Note: You can enter expressions like 2*(1+2) and a+b\n\n");
         print_input("Enter your choice: ");
-        scanf("%d", &choice);
+        scanf("%c", &choice);
         switch (choice) {
             case mat_addition:
                 add();
@@ -179,13 +178,14 @@ void matrix_mode() {
             default:
                 print_error("Invalid input.\n");
                 print_error("Please enter the correct input.\n");
+                getch();
                 break;
         }
     }
 }
 
 void quadratic_mode() {
-    int choice;
+    char choice;
     while (choice != 'n') {
         clrscr();
         center(" ___________________________________________________ ");
@@ -203,7 +203,7 @@ void quadratic_mode() {
         print_options("4.ax1+bx2+cx3+...=z\n");
         print_options("5.Exit\n");
         print_input("\nEnter your choice: ");
-        scanf("%d", &choice);
+        scanf("%s", &choice);
         switch (choice) {
             case quadratic_equation:
                 quadratic();
@@ -226,6 +226,7 @@ void quadratic_mode() {
             default:
                 print_error(
                     "Invalid input.\nPlease enter the correct input.\n");
+                getch();
                 break;
         }
     }
