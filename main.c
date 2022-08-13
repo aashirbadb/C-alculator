@@ -80,7 +80,7 @@ int main(int argc, char *argv) {
 }
 
 void normal_mode() {
-    FILE *normal_history = fopen("normal_history.txt", "a+");
+    FILE *normal_history = fopen("history.txt", "a+");
     clrscr();
     center(" ____________________________________________ ");
     center("|      __                                 _  |");
@@ -91,7 +91,6 @@ void normal_mode() {
     center("|____________________________________________|");
     print_info("\n\nEnter \"q\" to quit\n\n");
 
-    char cont;
     while (1) {
         Expression expr = createExpression();
         int ok = -1;
@@ -150,7 +149,7 @@ void matrix_mode() {
         center("| / /\\/\\ \\| (_| || |_ | |   | | >  <  |");
         center("| \\/    \\/ \\__,_| \\__||_|   |_|/_/\\_\\ |");
         center("|_____________________________________|");
-        print_options("\n\nOPERATIONS:\n");
+        print_options("\n\nOPTIONS:\n");
         print_options("1. Addition\n");
         print_options("2. Subtraction\n");
         print_options("3. Multiplication\n");
@@ -173,11 +172,9 @@ void matrix_mode() {
                 transpose();
                 break;
             case mat_exit:
-                clrscr();
                 break;
             default:
-                print_error("Invalid input.\n");
-                print_error("Please enter the correct input.\n");
+                print_error("Please a valid input.\n");
                 getch();
                 break;
         }
@@ -196,7 +193,7 @@ void quadratic_mode() {
         center("| \\__/   \\__, | \\__,_| \\__,_| \\__||_| \\___/ |_| |_| |");
         center("|           |_|                                     |");
         center("|___________________________________________________|");
-        print_options("\n\nOPERATIONS:\n");
+        print_options("\n\nOPTIONS:\n");
         print_options("1.ax^2+bx+c=0\n");
         print_options("2.anx+bnx=cn\n");
         print_options("3.anx+bnx+cnx=d\n");

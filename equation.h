@@ -83,7 +83,7 @@ void gaussian_elimination(int n) {
     }
     printf("\n");
     for (int i = 1; i <= n; i++) {
-        print_result("A%d = %g\n", i, x[i]);
+        print_result("x%d = %g\n", i, x[i]);
     }
     getch();
 }

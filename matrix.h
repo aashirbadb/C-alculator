@@ -81,7 +81,7 @@ void subtract() {
 }
 
 void multiply() {
-    int r1, r2, c1, c2, i, j, k;
+    int r1, r2, c1, c2, i, j, k, sum = 0;
     rows_columns(&r1, &c1);
     double **mat1 = create_matrix(r1, c1);
     read_matrix(mat1, r1, c1, 'A');
@@ -97,9 +97,11 @@ void multiply() {
     if (c1 == r2) {
         for (i = 0; i < r1; i++) {
             for (j = 0; j < c2; j++) {
+                sum = 0;
                 for (k = 0; k < c1; k++) {
-                    res[i][j] += mat1[i][k] * mat2[k][j];
+                    sum += mat1[i][k] * mat2[k][j];
                 }
+                res[i][j] = sum;
             }
         }
         display(res, r1, c2);

@@ -100,8 +100,8 @@ char *convert_postfix(char *expression) {
             decimals = 0;
             continue;
         }
-        // handle operator '+' and '-'
-        if (expression[i] == '+' || expression[i] == '-') {
+
+        if (is_operator(expression[i])) {
             while (strlen(stack) > 0 && is_operator(stack[strlen(stack) - 1])) {
                 char stack_top = stack[strlen(stack) - 1];
                 sprintf(buf + strlen(buf), "%c", stack_top);
@@ -110,19 +110,7 @@ char *convert_postfix(char *expression) {
             sprintf(stack + strlen(stack), "%c", expression[i]);
             continue;
         }
-        // handle operator '*' and '/'
-        if (expression[i] == '*' || expression[i] == '/' ||
-            expression[i] == '^') {
-            while (strlen(stack) > 0 && (stack[strlen(stack) - 1] == '*' ||
-                                         stack[strlen(stack) - 1] == '/' ||
-                                         stack[strlen(stack) - 1] == '^')) {
-                char stack_top = stack[strlen(stack) - 1];
-                sprintf(buf + strlen(buf), "%c", stack_top);
-                stack = remove_elements_by_index(stack, strlen(stack) - 1, 1);
-            }
-            sprintf(stack + strlen(stack), "%c", expression[i]);
-            continue;
-        }
+
         // handle '('
         if (expression[i] == '(') {
             sprintf(stack + strlen(stack), "%c", expression[i]);
@@ -152,7 +140,7 @@ double calculate(char *formula) {
     double *stack = (double *)malloc(sizeof(double) * formula_len * 2);
     memset(stack, 0, formula_len);
     int stack_count = 0;
-    double number = 0, result;
+    double number = 0;
     int decimals = 0;
     int i;
     for (i = 0; i < formula_len; ++i) {
