@@ -39,7 +39,7 @@ void quadratic_mode();
 int main(int argc, char *argv) {
     int choice;
     while (choice != m_quit) {
-        // clrscr();
+        clrscr();
         center(" ___________________________________________________________________ ");
         center("|    ___                _               _         _                 |");
         center("|   / __\\         __ _ | |  ___  _   _ | |  __ _ | |_   ___   _ __  |");

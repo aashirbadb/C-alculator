@@ -7,11 +7,6 @@
 
 double evaluate_expression(Expression expression);
 
-enum errors {
-    correct = 0,
-    letter_num
-};
-
 int priority(char x) {
     if (x == '(')
         return 0;
