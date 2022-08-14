@@ -23,6 +23,8 @@ void display(double **res, int r, int c) {
     getch();
 }
 
+// Asks user to enter matrix of order r*c
+// User can enter expression
 void read_matrix(double **matrix, int r, int c, char identifier) {
     int i, j;
     print_info("\nMatrix %c\n", identifier);
@@ -104,9 +106,9 @@ void multiply() {
     } else {
         print_error("Error: The matrices cannot be multiplied\n");
     }
-    // destroy_matrix(mat1, r1, c1);
-    // destroy_matrix(mat2, r2, c2);
-    // destroy_matrix(res, r1, c2);
+    destroy_matrix(mat1, r1, c1);
+    destroy_matrix(mat2, r2, c2);
+    destroy_matrix(res, r1, c2);
 }
 
 void transpose() {

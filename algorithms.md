@@ -249,12 +249,6 @@
         1. add '\_' to buffer
         1. number = 0, decimals = 0
         1. Goto step 3
-    1. IF expression[i] is an operator [+,-,/,*,^]
-        1. WHILE strlen(stack) > 0 and last element of stack is an operator
-            1. Add last element of stack to buffer
-            1. remove last element of stack
-        1. Add expression[i] to stack
-        1. Goto step 3
     1. IF expression[i] == '('
         1. Add '(' to stack
         1. Goto step 3
@@ -263,6 +257,12 @@
             1. add last element of stack to buffer
             1. remove last element of stack
         1. remove last element of stack
+        1. Goto step 3
+    1. IF expression[i] is an operator [+,-,/,*,^]
+        1. WHILE strlen(stack) > 0 and priority of last element of stack is greater than or equal to priority of expression[i]
+            1. Add last element of stack to buffer
+            1. remove last element of stack
+        1. Add expression[i] to stack
         1. Goto step 3
     1. i = i + 1
 1. i = strlen(stack) - 1

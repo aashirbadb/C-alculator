@@ -24,6 +24,8 @@ int priority(char x) {
     return 0;
 }
 
+// Check expression for errors
+// Returns 0 if there are errors along with error messages
 int is_expression_ok(char *str, int allow_chars) {
     int isCorrect = 1, left = 0, right = 0;
     for (int i = 0; i < strlen(str); i++) {
@@ -37,13 +39,13 @@ int is_expression_ok(char *str, int allow_chars) {
         }
         if ((is_number(str[i]) && is_letter(str[i + 1])) ||
             (is_letter(str[i]) && is_number(str[i + 1]))) {
-            print_error("You enter a letter immediately before and after a number. Please use * to separate them.\n");
+            print_error("You enter a letter immediately before or after a number. Please use * to separate them.\n");
             isCorrect = 0;
             break;
         }
         if ((str[i] == '.' && is_letter(str[i + 1])) ||
             (is_letter(str[i]) && str[i + 1] == '.')) {
-            print_error("You enter a decimal point(.) immediately before and after a number. Please use * to separate them.\n");
+            print_error("You enter a decimal point(.) immediately before or after a variable. Please use * to separate them.\n");
             isCorrect = 0;
             break;
         }
@@ -53,6 +55,7 @@ int is_expression_ok(char *str, int allow_chars) {
     return (isCorrect && (left == right));
 }
 
+// Applies modifications to the expression before converting it to postfix
 char *format_expression(char *expression) {
     int explen = strlen(expression);
     char *new_exp = (char *)malloc(explen * sizeof(char) * 2);
@@ -79,6 +82,7 @@ char *format_expression(char *expression) {
     return new_exp;
 }
 
+// Converts expression to postfix (eg: 2*2+1 => 2_2_*1_+)
 char *convert_postfix(char *expression) {
     int formula_len = strlen(expression), decimals = 0;
     double number = 0;
@@ -97,24 +101,20 @@ char *convert_postfix(char *expression) {
             }
             continue;
         }
-        // handle decimal point
         if (expression[i] == '.') {
             decimals = 1;
             continue;
         }
-        // Assign number to buf if number ends
         if (expression[i] == '_') {
             sprintf(buf + strlen(buf), "%g%c", number, expression[i]);
             number = 0;
             decimals = 0;
             continue;
         }
-
         if (expression[i] == '(') {
             sprintf(stack + strlen(stack) + 1, "%c", expression[i]);
             continue;
         }
-
         if (expression[i] == ')') {
             while (strlen(stack) > 0 && stack[strlen(stack)] != '(') {
                 sprintf(buf + strlen(buf), "%c", stack[strlen(stack) - 1]);
@@ -122,7 +122,6 @@ char *convert_postfix(char *expression) {
             }
             continue;
         }
-
         if (is_operator(expression[i])) {
             while (strlen(stack) > 0 && priority(stack[strlen(stack) - 1] >= priority(expression[i]))) {
                 sprintf(buf + strlen(buf), "%c", stack[strlen(stack) - 1]);
@@ -132,16 +131,16 @@ char *convert_postfix(char *expression) {
             continue;
         }
     }
-
     for (int i = strlen(stack) - 1; i >= 0; i--) {
         sprintf(buf + strlen(buf), "%c ", stack[i]);
     }
-
-    printf("%s\n", buf);
-
     return buf;
 }
 
+// Calculates the value of the postfix formula provided
+// The numbers are stored in an array and if there is an operator then the last two numbers are taken
+// from the array and the operation is done. The last two numbers of the array are removed and the result is added
+// At the end, the first value of the array is the result
 double calculate(char *formula) {
     int formula_len = strlen(formula);
     double *stack = (double *)malloc(sizeof(double) * formula_len * 2);
@@ -199,6 +198,9 @@ double calculate(char *formula) {
     return stack[0];
 }
 
+// reads the expression and if there are any variables, it asks the user to enter it.
+// The variables are stored in expression struct
+// Variables also supports expression but it cannot contain any variables(2+2 is ok but 2*a is not)
 int getVariables(Expression exp) {
     int len = strlen(exp.expression);
     for (int i = 0; i < len; i++) {
@@ -241,6 +243,8 @@ int getVariables(Expression exp) {
             strl = 0;
         }
     }
+
+    // Sort the variables array from longest to shortest
     for (int i = 0; i < exp.var_length; i++) {
         for (int j = 0; j < exp.var_length - 1 - i; j++)
             if (strlen(exp.variables[j].name) < strlen(exp.variables[j + 1].name)) {
@@ -252,6 +256,7 @@ int getVariables(Expression exp) {
     return exp.var_length;
 }
 
+// Replace the variables int the equation with the variable's value
 char *replaceVariables(Expression exp) {
     char *new_exp = (char *)malloc(sizeof(char) * strlen(exp.expression) * 2);
     memset(new_exp, 0, strlen(exp.expression) * 2);
@@ -274,6 +279,8 @@ char *replaceVariables(Expression exp) {
     return new_exp;
 }
 
+// takes an Expression struct as the argument and returns the result
+// prints error message and returns 0 if the any errors are found.
 double evaluate_expression(Expression expression) {
     if (is_expression_ok(expression.expression, 1) == 1) {
         expression.var_length = getVariables(expression);

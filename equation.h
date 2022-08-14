@@ -3,6 +3,7 @@
 
 #include "expression.h"
 
+// function to solve equations of the form ax^2+bx+c=0
 void quadratic() {
     Expression ea = createExpression(), eb = createExpression(), ec = createExpression();
     double a, b, c, d;
@@ -47,6 +48,7 @@ void quadratic() {
     freeExpression(ec);
 }
 
+// Solve any equations of the form ax1+bx2+cx3+......+z=0
 void gaussian_elimination(int n) {
     double **A = create_matrix(n + 1, n);
     double c, sum = 0.0;
