@@ -309,5 +309,5 @@
         1. stack_count -= 2
         1. stack[stack_count] = result
         1. stack_count = stack_count + 1
-    i = i + 1
+    1. i = i + 1
 1. STOP

@@ -12,6 +12,18 @@ enum errors {
     letter_num
 };
 
+int priority(char x) {
+    if (x == '(')
+        return 0;
+    if (x == '+' || x == '-')
+        return 1;
+    if (x == '*' || x == '/')
+        return 2;
+    if (x == '^')
+        return 3;
+    return 0;
+}
+
 int is_expression_ok(char *str, int allow_chars) {
     int isCorrect = 1, left = 0, right = 0;
     for (int i = 0; i < strlen(str); i++) {
@@ -44,7 +56,7 @@ int is_expression_ok(char *str, int allow_chars) {
 char *format_expression(char *expression) {
     int explen = strlen(expression);
     char *new_exp = (char *)malloc(explen * sizeof(char) * 2);
-    memset(new_exp, 0, explen);
+    memset(new_exp, 0, explen * sizeof(char) * 2);
     for (int i = 0; i < explen; i++) {
         if (expression[i] == ' ')
             continue;
@@ -68,16 +80,14 @@ char *format_expression(char *expression) {
 }
 
 char *convert_postfix(char *expression) {
-    int i;
     int formula_len = strlen(expression), decimals = 0;
     double number = 0;
     char *stack = (char *)malloc(sizeof(char) * formula_len);
     char *buf = (char *)malloc(sizeof(char) * formula_len);
-    memset(stack, 0, formula_len);
-    memset(buf, 0, formula_len);
+    memset(stack, 0, sizeof(char) * formula_len);
+    memset(buf, 0, sizeof(char) * formula_len);
 
-    for (i = 0; i < formula_len; i++) {
-        // handle number
+    for (int i = 0; i < formula_len; i++) {
         if (is_number(expression[i])) {
             if (decimals == 0) {
                 number = number * 10 + expression[i] - '0';
@@ -94,44 +104,41 @@ char *convert_postfix(char *expression) {
         }
         // Assign number to buf if number ends
         if (expression[i] == '_') {
-            sprintf(buf + strlen(buf), "%g", number);
-            sprintf(buf + strlen(buf), "%c", expression[i]);
+            sprintf(buf + strlen(buf), "%g%c", number, expression[i]);
             number = 0;
             decimals = 0;
             continue;
         }
 
-        if (is_operator(expression[i])) {
-            while (strlen(stack) > 0 && is_operator(stack[strlen(stack) - 1])) {
-                char stack_top = stack[strlen(stack) - 1];
-                sprintf(buf + strlen(buf), "%c", stack_top);
-                stack = remove_elements_by_index(stack, strlen(stack) - 1, 1);
-            }
-            sprintf(stack + strlen(stack), "%c", expression[i]);
-            continue;
-        }
-
-        // handle '('
         if (expression[i] == '(') {
-            sprintf(stack + strlen(stack), "%c", expression[i]);
+            sprintf(stack + strlen(stack) + 1, "%c", expression[i]);
             continue;
         }
-        // handle ')'
+
         if (expression[i] == ')') {
-            while (strlen(stack) > 0 && stack[strlen(stack) - 1] != '(') {
-                char stack_top = stack[strlen(stack) - 1];
-                sprintf(buf + strlen(buf), "%c", stack_top);
+            while (strlen(stack) > 0 && stack[strlen(stack)] != '(') {
+                sprintf(buf + strlen(buf), "%c", stack[strlen(stack) - 1]);
                 stack = remove_elements_by_index(stack, strlen(stack) - 1, 1);
             }
-            stack = remove_elements_by_index(stack, strlen(stack) - 1, 1);
+            continue;
+        }
+
+        if (is_operator(expression[i])) {
+            while (strlen(stack) > 0 && priority(stack[strlen(stack) - 1] >= priority(expression[i]))) {
+                sprintf(buf + strlen(buf), "%c", stack[strlen(stack) - 1]);
+                stack = remove_elements_by_index(stack, strlen(stack) - 1, 1);
+            }
+            sprintf(stack + strlen(stack), "%c", expression[i]);
             continue;
         }
     }
 
-    // Clear stack
-    for (i = strlen(stack) - 1; i >= 0; i--) {
-        sprintf(buf + strlen(buf), "%c", stack[i]);
+    for (int i = strlen(stack) - 1; i >= 0; i--) {
+        sprintf(buf + strlen(buf), "%c ", stack[i]);
     }
+
+    printf("%s\n", buf);
+
     return buf;
 }
 

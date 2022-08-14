@@ -89,11 +89,7 @@ void multiply() {
     double **mat2 = create_matrix(r2, c2);
     read_matrix(mat2, r2, c2, 'B');
     double **res = create_matrix(r1, c2);
-    for (i = 0; i < c1; i++) {
-        for (j = 0; j < r2; j++) {
-            res[i][j] = 0;
-        }
-    }
+
     if (c1 == r2) {
         for (i = 0; i < r1; i++) {
             for (j = 0; j < c2; j++) {
@@ -108,9 +104,9 @@ void multiply() {
     } else {
         print_error("Error: The matrices cannot be multiplied\n");
     }
-    destroy_matrix(mat1, r1, c1);
-    destroy_matrix(mat2, r2, c2);
-    destroy_matrix(res, r1, c2);
+    // destroy_matrix(mat1, r1, c1);
+    // destroy_matrix(mat2, r2, c2);
+    // destroy_matrix(res, r1, c2);
 }
 
 void transpose() {

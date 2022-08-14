@@ -80,7 +80,7 @@ int main(int argc, char *argv) {
 }
 
 void normal_mode() {
-    FILE *normal_history = fopen("history.txt", "a+");
+    FILE *history = fopen("history.txt", "a+");
     clrscr();
     center(" ____________________________________________ ");
     center("|      __                                 _  |");
@@ -102,11 +102,11 @@ void normal_mode() {
         if (strcmp(expr.expression, "q") == 0) break;
         double result = evaluate_expression(expr);
         print_result("%s = %g\n", expr.expression, result);
-        fprintf(normal_history, "%s = %g\n", expr.expression, result);
+        fprintf(history, "%s = %g\n", expr.expression, result);
         free(expr.expression);
         free(expr.variables);
     }
-    fclose(normal_history);
+    fclose(history);
 }
 
 void history() {
@@ -121,7 +121,7 @@ void history() {
     center("|                                    |___/ |");
     center("|__________________________________________|");
 
-    char file[] = "normal_history.txt";
+    char file[] = "history.txt";
     if (strlen(file) > 0) {
         FILE *fp = fopen(file, "r");
         char ch;

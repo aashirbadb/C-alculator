@@ -61,7 +61,7 @@ char *remove_elements_by_index(char *str, int index, int number) {
 
 char *replace_in_string(char *str, char *replace, char *with) {
     char *result = (char *)malloc(sizeof(char) * (strlen(str) - strlen(replace) + strlen(with)) * 2);
-
+    memset(result, 0, sizeof(char) * (strlen(str) - strlen(replace) + strlen(with)) * 2);
     for (int i = 0; i < strlen(str); i++) {
         if (strncmp(str + i, replace, strlen(replace)) == 0) {
             str = remove_elements_by_index(str, i, strlen(replace) - 1);
